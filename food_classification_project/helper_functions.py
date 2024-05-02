@@ -1,5 +1,9 @@
+### We create a bunch of helpful functions throughout the course.
+### Storing them here so they're easily accessible.
+
 import tensorflow as tf
 
+# Create a function to import an image and resize it to be able to be used with our model
 def load_and_prep_image(filename, img_shape=224, scale=True):
   """
   Reads in an image from filename, turns it into a tensor and reshapes into
@@ -23,11 +27,14 @@ def load_and_prep_image(filename, img_shape=224, scale=True):
   else:
     return img
 
+# Note: The following confusion matrix code is a remix of Scikit-Learn's 
+# plot_confusion_matrix function - https://scikit-learn.org/stable/modules/generated/sklearn.metrics.plot_confusion_matrix.html
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
+# Our function needs a different name to sklearn's plot_confusion_matrix
 def make_confusion_matrix(y_true, y_pred, classes=None, figsize=(10, 10), text_size=15, norm=False, savefig=False): 
   """Makes a labelled confusion matrix comparing predictions and ground truth labels.
 
@@ -45,6 +52,13 @@ def make_confusion_matrix(y_true, y_pred, classes=None, figsize=(10, 10), text_s
   
   Returns:
     A labelled confusion matrix plot comparing y_true and y_pred.
+
+  Example usage:
+    make_confusion_matrix(y_true=test_labels, # ground truth test labels
+                          y_pred=y_preds, # predicted labels
+                          classes=class_names, # array of class label names
+                          figsize=(15, 15),
+                          text_size=10)
   """  
   # Create the confustion matrix
   cm = confusion_matrix(y_true, y_pred)
@@ -95,6 +109,7 @@ def make_confusion_matrix(y_true, y_pred, classes=None, figsize=(10, 10), text_s
   if savefig:
     fig.savefig("confusion_matrix.png")
   
+# Make a function to predict on images and plot them (works with multi-class)
 def pred_and_plot(model, filename, class_names):
   """
   Imports an image located at filename, makes a prediction on it with
@@ -137,6 +152,7 @@ def create_tensorboard_callback(dir_name, experiment_name):
   print(f"Saving TensorBoard log files to: {log_dir}")
   return tensorboard_callback
 
+# Plot the validation and training data separately
 import matplotlib.pyplot as plt
 
 def plot_loss_curves(history):
@@ -144,6 +160,7 @@ def plot_loss_curves(history):
   Returns separate loss curves for training and validation metrics.
 
   Args:
+    history: TensorFlow model History object (see: https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/History)
   """ 
   loss = history.history['loss']
   val_loss = history.history['val_loss']
@@ -212,6 +229,8 @@ def compare_historys(original_history, new_history, initial_epochs=5):
     plt.xlabel('epoch')
     plt.show()
   
+# Create function to unzip a zipfile into current working directory 
+# (since we're going to be downloading and unzipping a few files)
 import zipfile
 
 def unzip_data(filename):
@@ -225,6 +244,8 @@ def unzip_data(filename):
   zip_ref.extractall()
   zip_ref.close()
 
+# Walk through an image classification directory and find out how many files (images)
+# are in each subdirectory.
 import os
 
 def walk_through_dir(dir_path):
@@ -243,6 +264,7 @@ def walk_through_dir(dir_path):
   for dirpath, dirnames, filenames in os.walk(dir_path):
     print(f"There are {len(dirnames)} directories and {len(filenames)} images in '{dirpath}'.")
     
+# Function to evaluate: accuracy, precision, recall, f1-score
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 def calculate_results(y_true, y_pred):
